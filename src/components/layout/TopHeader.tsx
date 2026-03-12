@@ -1,0 +1,85 @@
+import React from 'react';
+import { Crosshair, Battery, Radio, ShieldAlert } from 'lucide-react';
+import { clsx } from "clsx";
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+interface TopHeaderProps {
+    title: string;
+    subtitle?: string;
+}
+
+export default function TopHeader({ title, subtitle }: TopHeaderProps) {
+    const pathname = usePathname();
+
+    const navItems = [
+        { name: 'OVERVIEW', path: '/overview' },
+        { name: 'CRISIS FORUM', path: '/forum' },
+        { name: 'FAMILY PREPAREDNESS CIRCLE', path: '/circles' },
+        { name: 'RV PARKS', path: '/rv-parks' },
+        { name: 'SIMULATOR', path: '/simulator' },
+        { name: 'OFFERS & STRATEGY', path: '/offers' },
+    ];
+
+    return (
+        <header className="flex flex-col border-b border-border bg-bg-secondary/90 backdrop-blur-xl z-[1000] relative">
+            <div className="flex justify-between items-center px-6 h-20">
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <Crosshair className="w-6 h-6 text-accent" />
+                        <h1 className="font-bold text-xl tracking-widest text-text-heading">
+                            S&P: <span className="text-accent">{title}</span>
+                        </h1>
+                    </div>
+                    <div className="hidden lg:flex items-center gap-2 text-[10px] font-mono text-accent/70 border border-accent/20 px-2 py-1 rounded bg-accent/5">
+                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                        SYS.STATUS: SECURE
+                    </div>
+                </div>
+                <div className="flex gap-3">
+                    <StatusBadge icon={<ShieldAlert size={12} strokeWidth={3} />} text="ALERT LEVEL: MEDIUM" type="warning" />
+                    <StatusBadge icon={<Battery size={12} strokeWidth={3} />} text="84%" type="accent" />
+                    <StatusBadge icon={<Radio size={12} strokeWidth={3} />} text="COMMS: OK" type="accent" />
+                </div>
+            </div>
+            {subtitle && (
+                <div className="px-6 pb-2">
+                    <p className="text-[10px] text-text-dim uppercase tracking-[0.2em] font-mono">{subtitle}</p>
+                </div>
+            )}
+            <nav className="flex px-6 gap-6 border-t border-border-subtle">
+                {navItems.map((item) => {
+                    const isActive = pathname === item.path || (pathname?.startsWith(item.path) && item.path !== '/');
+                    return (
+                        <Link
+                            key={item.path}
+                            href={item.path}
+                            className={clsx(
+                                "py-3 text-xs font-bold tracking-[0.2em] relative transition-colors duration-300",
+                                isActive ? "text-accent" : "text-text-dim hover:text-text-body"
+                            )}
+                        >
+                            {item.name}
+                            {isActive && (
+                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                            )}
+                        </Link>
+                    );
+                })}
+            </nav>
+        </header>
+    );
+}
+
+function StatusBadge({ icon, text, type }: { icon: React.ReactNode; text: string; type: 'accent' | 'warning' }) {
+    return (
+        <div className={clsx(
+            "flex items-center gap-2 px-4 py-1.5 border rounded-md text-[10px] font-bold uppercase tracking-widest",
+            type === 'accent' ? "text-accent border-accent/50 bg-accent/10" : "text-warning border-warning/50 bg-warning/10"
+        )}>
+            {icon}
+            <span>{text}</span>
+        </div>
+    );
+}
