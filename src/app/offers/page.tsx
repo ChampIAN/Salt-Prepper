@@ -10,14 +10,14 @@ export default function OffersPage() {
         <GridBackground showEmbers={true} className="min-h-screen text-text-muted font-mono flex flex-col selection:bg-accent/30">
             <TopHeader title="STRATEGY & UPGRADES" subtitle="MONETIZATION LADDER & OFFER MATRIX" />
 
-            <main className="flex-1 p-8 max-w-7xl mx-auto w-full relative">
+            <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full relative">
                 {/* Ambient Glow */}
                 <div className="absolute top-0 left-1/4 w-[600px] h-[400px] bg-accent-deep/15 blur-[150px] rounded-full pointer-events-none" />
                 <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-warning-deep/10 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="relative z-10">
                     <div className="mb-12 border-l-4 border-accent pl-4 py-1">
-                        <h2 className="text-3xl font-black tracking-widest uppercase text-text-heading mb-2">
+                        <h2 className="text-xl md:text-3xl font-black tracking-widest uppercase text-text-heading mb-2">
                             FORTRESS OS <span className="text-accent">OFFERS</span>
                         </h2>
                         <p className="text-sm uppercase tracking-widest">
@@ -25,7 +25,7 @@ export default function OffersPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                         {/* Free Tier */}
                         <OfferCard
                             title="Free Tier"
@@ -40,7 +40,7 @@ export default function OffersPage() {
                         />
 
                         {/* App Subscription */}
-                        <div className="md:col-span-2 lg:col-span-2">
+                        <div className="sm:col-span-2 lg:col-span-2">
                             <OfferCard
                                 title="Premium App & Community"
                                 price="$10/mo"
@@ -112,7 +112,7 @@ export default function OffersPage() {
                         />
 
                         {/* $500 Complete Course */}
-                        <div className="md:col-span-2 lg:col-span-2">
+                        <div className="sm:col-span-2 lg:col-span-2">
                             <OfferCard
                                 title="The Complete Fortress OS"
                                 price="$500"
@@ -140,7 +140,7 @@ function OfferCard({
     title: string; price: string; billing?: string; subtitle: string; icon: React.ReactNode; features: string[]; highlighted?: boolean;
 }) {
     return (
-        <div className={`flex flex-col border p-6 relative transition-all duration-300 rounded-xl scanner-card group ${highlighted
+        <div className={`flex flex-col border p-4 md:p-6 relative transition-all duration-300 rounded-xl scanner-card group ${highlighted
             ? 'bg-surface border-accent/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]'
             : 'bg-surface border-border hover:border-accent/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)]'
             }`}>

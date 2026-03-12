@@ -99,7 +99,7 @@ export default function SimulatorPage() {
         <div className="flex flex-col h-screen overflow-hidden text-text-body bg-bg">
             <TopHeader title="SIMULATOR" subtitle="CRISIS ENGINE" />
 
-            <div className="flex flex-1 overflow-hidden relative">
+            <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
                 {/* Background Grid */}
                 <div className="absolute inset-0 tactical-grid z-0" />
                 {/* Ambient Glow */}
@@ -107,12 +107,12 @@ export default function SimulatorPage() {
 
 
                 {/* Left Panel: Vitals */}
-                <aside className="w-full md:w-[320px] border-r border-border bg-bg-secondary/80 backdrop-blur-md h-full overflow-y-auto p-6 z-10 flex flex-col space-y-6">
-                    <h2 className="text-[11px] font-black tracking-widest text-accent uppercase mb-2 flex items-center">
+                <aside className="w-full md:w-[320px] border-b md:border-b-0 md:border-r border-border bg-bg-secondary/80 backdrop-blur-md overflow-x-auto md:overflow-y-auto p-4 md:p-6 z-10 flex md:flex-col gap-4 md:gap-0 md:space-y-6">
+                    <h2 className="text-[11px] font-black tracking-widest text-accent uppercase mb-0 md:mb-2 flex items-center whitespace-nowrap">
                         <Activity size={14} className="mr-2" /> CIRCLE VITALS
                     </h2>
 
-                    <div className="space-y-4">
+                    <div className="flex md:flex-col gap-3 md:gap-0 md:space-y-4 overflow-x-auto md:overflow-visible min-w-0">
                         <VitalBar label="POWER & ENERGY" icon={<Zap size={14} />} value={resources.power} />
                         <VitalBar label="COMMUNICATIONS" icon={<Wifi size={14} />} value={resources.comms} />
                         <VitalBar label="PERIMETER SECURITY" icon={<ShieldAlert size={14} />} value={resources.security} />
@@ -121,7 +121,7 @@ export default function SimulatorPage() {
                         <VitalBar label="MORALE" icon={<Activity size={14} />} value={resources.morale} />
                     </div>
 
-                    <div className="mt-8 p-4 border border-accent/30 bg-accent/5 rounded-lg relative overflow-hidden">
+                    <div className="hidden md:block mt-8 p-4 border border-accent/30 bg-accent/5 rounded-lg relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-2 opacity-20"><ThermometerSnowflake size={40} /></div>
                         <h3 className="text-[10px] font-bold text-text-muted tracking-widest mb-1">PROJECTED SURVIVABILITY</h3>
                         <div className="text-3xl font-black text-accent">{overallScore}%</div>
@@ -130,7 +130,7 @@ export default function SimulatorPage() {
                 </aside>
 
                 {/* Main Console */}
-                <main className="flex-1 flex flex-col p-6 lg:p-12 z-10 relative overflow-hidden justify-center items-center">
+                <main className="flex-1 flex flex-col p-4 md:p-6 lg:p-12 z-10 relative overflow-y-auto md:overflow-hidden justify-center items-center">
 
                     {!scenarioActive ? (
                         <motion.div
@@ -250,8 +250,8 @@ function VitalBar({ label, icon, value }: { label: string; icon: React.ReactNode
     };
 
     return (
-        <div>
-            <div className="flex justify-between text-[10px] font-bold tracking-widest text-text-muted mb-1">
+        <div className="min-w-[120px] md:min-w-0">
+            <div className="flex justify-between text-[9px] md:text-[10px] font-bold tracking-widest text-text-muted mb-1">
                 <span className="flex items-center uppercase">{icon} <span className="ml-1.5">{label}</span></span>
                 <span>{value}%</span>
             </div>

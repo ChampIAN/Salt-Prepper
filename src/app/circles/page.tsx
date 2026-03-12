@@ -20,6 +20,7 @@ interface FamilyMember {
 
 export default function CirclesTacticalView() {
     const [activeTab, setActiveTab] = useState("FAMILY CIRCLES");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const sidebarItems = [
         { icon: <Users size={18} />, label: "FAMILY CIRCLES", active: activeTab === "FAMILY CIRCLES", onClick: () => setActiveTab("FAMILY CIRCLES") },
@@ -102,29 +103,29 @@ export default function CirclesTacticalView() {
 
     return (
         <div className="flex flex-col h-screen overflow-hidden text-text-body bg-bg tactical-grid">
-            <TopHeader title="GRID DOWN" subtitle="TACTICAL SIMULATION PROTOCOL V4.2" />
+            <TopHeader title="GRID DOWN" subtitle="TACTICAL SIMULATION PROTOCOL V4.2" onMobileMenuToggle={() => setSidebarOpen(!sidebarOpen)} isMobileMenuOpen={sidebarOpen} />
 
             <div className="flex flex-1 overflow-hidden">
-                <Sidebar items={sidebarItems} title="TACTICAL NAVIGATION" />
+                <Sidebar items={sidebarItems} title="TACTICAL NAVIGATION" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-                <main className="flex-1 p-8 overflow-y-auto w-full relative">
+                <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full relative">
                     <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-accent-deep/15 blur-[120px] rounded-full pointer-events-none" />
 
                     <div className="max-w-[1200px] mx-auto relative z-10">
 
                         {activeTab === "FAMILY CIRCLES" && (
                             <>
-                                <div className="flex justify-between items-center mb-6">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                     <motion.h2 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-[12px] font-black tracking-widest uppercase flex items-center space-x-2 text-text-heading">
                                         <Users size={18} className="text-accent" />
                                         <span>FAMILY CIRCLES TACTICAL VIEW</span>
                                     </motion.h2>
-                                    <div className="flex space-x-4">
-                                        <button onClick={handleCopyLink} className="flex items-center space-x-2 text-xs font-bold tracking-widest uppercase text-accent border border-accent/50 px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:bg-accent/10 transition-colors">
+                                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+                                        <button onClick={handleCopyLink} className="flex items-center justify-center space-x-2 text-xs font-bold tracking-widest uppercase text-accent border border-accent/50 px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:bg-accent/10 transition-colors">
                                             {linkCopied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                                             <span>{linkCopied ? "INVITE LINK COPIED" : "GENERATE INVITE LINK"}</span>
                                         </button>
-                                        <button onClick={() => setIsAdding(!isAdding)} className="flex items-center space-x-2 text-xs font-bold tracking-widest uppercase bg-accent text-black px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:bg-accent-bright transition-colors">
+                                        <button onClick={() => setIsAdding(!isAdding)} className="flex items-center justify-center space-x-2 text-xs font-bold tracking-widest uppercase bg-accent text-black px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:bg-accent-bright transition-colors">
                                             <Plus size={14} />
                                             <span>ADD FAMILY</span>
                                         </button>

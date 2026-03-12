@@ -10,6 +10,22 @@ interface GridBackgroundProps {
     className?: string;
 }
 
+// Deterministic ember data to avoid hydration mismatch from Math.random()
+const EMBER_DATA = (() => {
+    let seed = 123;
+    const seededRandom = () => {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+    };
+    return Array.from({ length: 12 }, () => ({
+        left: `${(seededRandom() * 100).toFixed(4)}%`,
+        animationDuration: `${(seededRandom() * 5 + 5).toFixed(4)}s`,
+        animationDelay: `${(seededRandom() * 5).toFixed(4)}s`,
+        width: `${(seededRandom() * 4 + 2).toFixed(4)}px`,
+        height: `${(seededRandom() * 4 + 2).toFixed(4)}px`,
+    }));
+})();
+
 export default function GridBackground({
     children,
     showScanline = true,
@@ -28,16 +44,16 @@ export default function GridBackground({
             {/* Ember Particles */}
             {shouldShowEmbers && (
                 <>
-                    {[...Array(12)].map((_, i) => (
+                    {EMBER_DATA.map((ember, i) => (
                         <div
                             key={i}
                             className="ember"
                             style={{
-                                left: `${Math.random() * 100}%`,
-                                animationDuration: `${Math.random() * 5 + 5}s`,
-                                animationDelay: `${Math.random() * 5}s`,
-                                width: `${Math.random() * 4 + 2}px`,
-                                height: `${Math.random() * 4 + 2}px`
+                                left: ember.left,
+                                animationDuration: ember.animationDuration,
+                                animationDelay: ember.animationDelay,
+                                width: ember.width,
+                                height: ember.height
                             }}
                         />
                     ))}

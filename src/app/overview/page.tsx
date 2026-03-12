@@ -11,6 +11,7 @@ import Input, { Select } from '@/components/ui/Input';
 
 export default function PreparednessDashboard() {
   const [activeTab, setActiveTab] = useState("PREPAREDNESS SCORE & ACTION CHECKLIST");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const sidebarItems = [
     { icon: <LayoutDashboard size={18} />, label: "PREPAREDNESS SCORE & ACTION CHECKLIST", active: activeTab === "PREPAREDNESS SCORE & ACTION CHECKLIST", onClick: () => setActiveTab("PREPAREDNESS SCORE & ACTION CHECKLIST") },
@@ -32,12 +33,12 @@ export default function PreparednessDashboard() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden text-text-body bg-bg tactical-grid">
-      <TopHeader title="PREPAREDNESS" subtitle="TACTICAL SIMULATION PROTOCOL V4.2" />
+      <TopHeader title="PREPAREDNESS" subtitle="TACTICAL SIMULATION PROTOCOL V4.2" onMobileMenuToggle={() => setSidebarOpen(!sidebarOpen)} isMobileMenuOpen={sidebarOpen} />
 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar items={sidebarItems} />
+        <Sidebar items={sidebarItems} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <main className="flex-1 p-8 overflow-y-auto w-full relative">
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full relative">
           {/* Ambient Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-accent-deep/20 blur-[150px] rounded-full pointer-events-none" />
 
@@ -47,9 +48,9 @@ export default function PreparednessDashboard() {
                 {/* Main Score - Large Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-                  className="col-span-12 lg:col-span-6 glass-panel p-10 flex flex-col items-center justify-center relative shadow-[inset_0_0_30px_rgba(0,0,0,0.6)]"
+                  className="col-span-12 lg:col-span-6 glass-panel p-6 md:p-10 flex flex-col items-center justify-center relative shadow-[inset_0_0_30px_rgba(0,0,0,0.6)]"
                 >
-                  <h2 className="absolute top-6 left-8 text-[11px] text-text-heading uppercase tracking-[0.2em] font-bold opacity-80">READINESS SCORE (Across 7 Domains)</h2>
+                  <h2 className="absolute top-4 left-4 md:top-6 md:left-8 text-[10px] md:text-[11px] text-text-heading uppercase tracking-[0.2em] font-bold opacity-80">READINESS SCORE (Across 7 Domains)</h2>
 
                   <div className="mt-8 mb-8 scale-110">
                     <CircularProgress percentage={overallScore} />

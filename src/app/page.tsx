@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { 
   ShieldCheck, BookOpen, Clock, Gift, Download, Star, Target, Users, 
   ShoppingCart, Mail, Quote, Crosshair, Terminal, Radio, FileSignature, 
-  ChevronRight, Activity, Database, Lock, Zap, CheckCircle2, ChevronDown, Flame
+  ChevronRight, Activity, Database, Lock, Zap, CheckCircle2, ChevronDown, Flame,
+  Menu, X
 } from 'lucide-react';
 
 export default function App() {
@@ -14,6 +15,23 @@ export default function App() {
   const [activeChapter, setActiveChapter] = useState(0);
   const [copiesLeft, setCopiesLeft] = useState(412);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Pre-compute ember positions with deterministic values to avoid hydration mismatch
+  const emberData = React.useMemo(() => {
+    let seed = 42;
+    const seededRandom = () => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+    return Array.from({ length: 20 }, () => ({
+      left: `${(seededRandom() * 100).toFixed(4)}%`,
+      animationDuration: `${(seededRandom() * 5 + 5).toFixed(4)}s`,
+      animationDelay: `${(seededRandom() * 5).toFixed(4)}s`,
+      width: `${(seededRandom() * 4 + 2).toFixed(4)}px`,
+      height: `${(seededRandom() * 4 + 2).toFixed(4)}px`,
+    }));
+  }, []);
 
   const chapters = [
     { id: "01", title: "The Theology of the Watchman", desc: "Dismantle the guilt and fear complex. Learn why preparation is an act of biblical stewardship, not a lack of faith." },
@@ -157,12 +175,15 @@ export default function App() {
 
         /* Isometric Layer Diagram */
         .iso-layer {
-          width: 300px; height: 300px; background: rgba(9, 9, 11, 0.9);
+          width: 200px; height: 200px; background: rgba(9, 9, 11, 0.9);
           border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px;
           position: absolute; transform: rotateX(60deg) rotateZ(-45deg);
           box-shadow: -20px 20px 30px rgba(0,0,0,0.8);
           display: flex; align-items: center; justify-content: center;
           transition: all 0.5s ease;
+        }
+        @media (min-width: 768px) {
+          .iso-layer { width: 300px; height: 300px; }
         }
         .iso-container:hover .iso-layer-1 { transform: translateY(-40px) rotateX(60deg) rotateZ(-45deg); border-color: #10b981; background: rgba(16, 185, 129, 0.1); }
         .iso-container:hover .iso-layer-2 { transform: translateY(-80px) rotateX(60deg) rotateZ(-45deg); border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
@@ -181,10 +202,10 @@ export default function App() {
 
       {/* Sticky Navbar */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#050505]/90 backdrop-blur-xl border-b border-zinc-800' : 'bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="font-bold text-xl tracking-widest flex items-center gap-2 text-white">
-              <Crosshair className="w-6 h-6 text-emerald-500" />
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3 md:gap-6">
+            <div className="font-bold text-lg md:text-xl tracking-widest flex items-center gap-2 text-white">
+              <Crosshair className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
               <span>S&P</span>
             </div>
             {scrolled && (
@@ -194,14 +215,15 @@ export default function App() {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 md:gap-6">
             <div className="hidden md:block text-right">
               <div className="text-[10px] font-mono text-amber-500 tracking-widest">{copiesLeft} ALPHA COPIES LEFT</div>
               <div className="w-32 h-1 bg-zinc-800 mt-1 rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500" style={{ width: `${(copiesLeft/500)*100}%` }}></div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            {/* Desktop buttons */}
+            <div className="hidden md:flex items-center gap-4">
               <button className="bg-white hover:bg-zinc-200 text-black px-6 py-3 font-bold text-xs tracking-[0.15em] transition-all transform hover:scale-105 rounded-sm">
                 PREORDER NOW
               </button>
@@ -209,20 +231,40 @@ export default function App() {
                 ACCESS PLATFORM
               </Link>
             </div>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-[#050505]/95 backdrop-blur-xl border-t border-zinc-800 px-4 pb-4 pt-2 space-y-3 animate-in slide-in-from-top">
+            <div className="text-[10px] font-mono text-amber-500 tracking-widest text-center py-2">{copiesLeft} ALPHA COPIES LEFT</div>
+            <button className="w-full bg-white hover:bg-zinc-200 text-black px-6 py-3 font-bold text-xs tracking-[0.15em] transition-all rounded-sm">
+              PREORDER NOW
+            </button>
+            <Link href="/overview" onClick={() => setMobileMenuOpen(false)} className="w-full border border-emerald-500/50 hover:bg-emerald-500/10 text-emerald-500 px-6 py-3 font-bold text-xs tracking-[0.15em] transition-all rounded-sm block text-center">
+              ACCESS PLATFORM
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* 1. HERO SECTION (Cinematic Disaster Environment) */}
       <section className="relative min-h-[95vh] flex items-center pt-20 overflow-hidden cinematic-bg tactical-grid scanline-overlay">
         {/* Generated Particles/Embers */}
-        {[...Array(20)].map((_, i) => (
+        {emberData.map((ember, i) => (
           <div key={i} className="ember" style={{
-            left: `${Math.random() * 100}%`,
-            animationDuration: `${Math.random() * 5 + 5}s`,
-            animationDelay: `${Math.random() * 5}s`,
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`
+            left: ember.left,
+            animationDuration: ember.animationDuration,
+            animationDelay: ember.animationDelay,
+            width: ember.width,
+            height: ember.height
           }}></div>
         ))}
         
@@ -230,7 +272,7 @@ export default function App() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-900/20 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-[800px] h-[500px] bg-emerald-900/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-8 items-center w-full">
           
           {/* Left: Typography & CTA */}
           <div className="lg:col-span-7 space-y-8 relative">
@@ -239,21 +281,21 @@ export default function App() {
               The Guide to Faith-Centered Resilience
             </div>
             
-            <h1 className="text-5xl sm:text-6xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tighter text-white drop-shadow-2xl">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tighter text-white drop-shadow-2xl">
               BUILD YOUR<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-500">LIFE'S </span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-700 filter drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">STRONGHOLD.</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-xl font-light">
+            <p className="text-base md:text-xl text-zinc-400 leading-relaxed max-w-xl font-light">
               Preparation is an act of stewardship, not fear. Install the <strong className="text-zinc-100 font-medium">Fortress OS</strong>&mdash;a comprehensive mechanical system to protect your family and preserve your community when the grid fails.
             </p>
             
             {/* High-Conversion Preorder Block */}
-            <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-zinc-800 p-6 max-w-lg rounded-xl shadow-2xl relative overflow-hidden group">
+            <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-zinc-800 p-4 md:p-6 max-w-lg rounded-xl shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
               
-              <div className="flex justify-between items-end mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0 mb-6">
                 <div>
                   <div className="text-[10px] font-mono text-zinc-500 tracking-widest mb-1">LAUNCH PROMO ENDS IN</div>
                   <div className="flex gap-4 font-mono">
@@ -283,11 +325,11 @@ export default function App() {
           </div>
 
           {/* Right: Elite 3D Book Mockup */}
-          <div className="lg:col-span-5 book-perspective flex justify-center items-center h-[500px] lg:h-[700px] relative">
+          <div className="lg:col-span-5 book-perspective flex justify-center items-center h-[350px] sm:h-[500px] lg:h-[700px] relative">
             {/* Book Pedestal / Glow */}
-            <div className="absolute bottom-10 w-64 h-10 bg-emerald-500/20 blur-[30px] rounded-[100%] animate-pulse-glow"></div>
+            <div className="absolute bottom-10 w-48 md:w-64 h-10 bg-emerald-500/20 blur-[30px] rounded-[100%] animate-pulse-glow"></div>
             
-            <div className="book-container animate-float w-[280px] h-[410px] lg:w-[360px] lg:h-[530px]">
+            <div className="book-container animate-float w-[200px] h-[300px] sm:w-[280px] sm:h-[410px] lg:w-[360px] lg:h-[530px]">
               <div className="book-spine flex items-center justify-center">
                 <span className="transform -rotate-90 text-zinc-500 text-xs font-bold tracking-[0.4em] whitespace-nowrap">SALT & PREPPER</span>
               </div>
@@ -303,7 +345,7 @@ export default function App() {
                 
                 <div className="relative z-10 text-center mt-8">
                   <div className="text-emerald-400 tracking-[0.3em] text-[10px] font-mono mb-6 border border-emerald-500/30 inline-block px-3 py-1 bg-emerald-500/10 backdrop-blur-sm shadow-[0_0_15px_rgba(16,185,129,0.2)]">THE FORTRESS OS</div>
-                  <h2 className="text-5xl lg:text-7xl font-black text-white leading-[0.85] tracking-tighter">SALT<br/><span className="text-5xl text-zinc-600 font-light my-2 block">&</span>PREPPER</h2>
+                  <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white leading-[0.85] tracking-tighter">SALT<br/><span className="text-3xl sm:text-5xl text-zinc-600 font-light my-2 block">&</span>PREPPER</h2>
                 </div>
                 
                 <div className="relative z-10 text-center pb-4">
@@ -320,7 +362,7 @@ export default function App() {
 
       {/* 2. APPLE-STYLE SCROLLING STORY */}
       <section className="bg-[#000] relative border-t border-zinc-900 py-32">
-        <div className="max-w-5xl mx-auto px-6 space-y-40 text-center">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 space-y-20 md:space-y-40 text-center">
           <div className="reveal-on-scroll">
             <Flame className="w-12 h-12 text-amber-500 mx-auto mb-8 opacity-50" />
             <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-6">The grid drops.</h2>
@@ -349,8 +391,8 @@ export default function App() {
 
       {/* 3. ANIMATED PREPAREDNESS DIAGRAM (The Fortress OS) */}
       <section className="py-32 bg-[#050505] tactical-grid border-y border-zinc-900 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          <div className="order-2 lg:order-1 relative h-[400px] md:h-[500px] flex justify-center items-center iso-container reveal-on-scroll">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
+          <div className="order-2 lg:order-1 relative h-[280px] md:h-[500px] flex justify-center items-center iso-container reveal-on-scroll">
             {/* Isometric Layers */}
             <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] rounded-full"></div>
             
@@ -402,7 +444,7 @@ export default function App() {
 
       {/* 4. INTERACTIVE CHAPTER EXPLORER */}
       <section className="py-32 bg-[#000000]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-20 reveal-on-scroll">
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">Inside The Playbook</h2>
             <p className="text-zinc-500 font-mono text-sm tracking-widest">SELECT A SECTOR TO PREVIEW INTELLIGENCE</p>
@@ -455,8 +497,8 @@ export default function App() {
 
       {/* 5. AMAZON-STYLE REVIEW COMPONENT */}
       <section className="py-24 bg-[#050505] border-y border-zinc-900">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="grid md:grid-cols-12 gap-12 reveal-on-scroll">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <div className="grid md:grid-cols-12 gap-8 md:gap-12 reveal-on-scroll">
             
             {/* Review Breakdown */}
             <div className="md:col-span-4 space-y-6">
@@ -487,7 +529,7 @@ export default function App() {
             </div>
 
             {/* Selected Reviews */}
-            <div className="md:col-span-8 grid sm:grid-cols-2 gap-6">
+            <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               {[
                 { author: "SARAH M.", title: "MOTHER OF 3", text: "Finally, a preparedness book that doesn't make me feel crazy. It replaced my anxiety with a calm, executable plan for my family." },
                 { author: "DAVID R.", title: "FORMER LEO", text: "The 'Fortress OS' framework is brilliant. It takes complex tactical and logistical concepts and translates them into plain English." },
@@ -572,13 +614,13 @@ export default function App() {
 
       {/* 7. HIGH-CONVERSION LAUNCH BONUSES */}
       <section className="py-32 bg-[#050505] tactical-grid border-t border-zinc-900 relative">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16 reveal-on-scroll">
             <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">PREORDER ASSETS</h2>
             <p className="text-amber-500 font-mono text-sm tracking-widest animate-pulse">WARNING: THESE ASSETS DISAPPEAR AT LAUNCH</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 reveal-on-scroll delay-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 reveal-on-scroll delay-100">
             {[
               { id: "01", icon: ShieldCheck, title: "THE 72-HOUR BLUEPRINT", val: "$47 VALUE", desc: "A printable, step-by-step physical action plan to secure your home's water and power baseline this exact weekend." },
               { id: "02", icon: Zap, title: "FORTRESS OS MASTERCLASS", val: "$97 VALUE", desc: "A 45-minute behind-the-scenes video showing exactly how a real 'Deep Pantry' and Comms system is organized." },
@@ -600,19 +642,19 @@ export default function App() {
 
       {/* 8. FINAL PURCHASE BAR & FOOTER */}
       <section className="py-24 bg-[#0a0a0a] relative border-t border-zinc-800">
-        <div className="max-w-4xl mx-auto px-6 text-center reveal-on-scroll">
-          <h2 className="text-4xl md:text-6xl font-black mb-8 text-white tracking-tighter">SECURE YOUR HARDWARE</h2>
+        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center reveal-on-scroll">
+          <h2 className="text-3xl md:text-6xl font-black mb-8 text-white tracking-tighter">SECURE YOUR HARDWARE</h2>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12">
             {['Amazon', 'Barnes & Noble', 'Books-A-Million', 'Direct (Signed)'].map((retailer) => (
-              <button key={retailer} className="bg-[#050505] hover:bg-zinc-900 border border-zinc-800 rounded p-6 flex flex-col items-center justify-center gap-3 transition-all transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.5)] group">
+              <button key={retailer} className="bg-[#050505] hover:bg-zinc-900 border border-zinc-800 rounded p-4 md:p-6 flex flex-col items-center justify-center gap-2 md:gap-3 transition-all transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.5)] group">
                 <ShoppingCart className="w-6 h-6 text-zinc-600 group-hover:text-amber-500 transition-colors" />
-                <span className="font-bold text-xs tracking-widest text-zinc-300 group-hover:text-white transition-colors">{retailer}</span>
+                <span className="font-bold text-[10px] md:text-xs tracking-widest text-zinc-300 group-hover:text-white transition-colors">{retailer}</span>
               </button>
             ))}
           </div>
 
-          <div className="bg-emerald-500/10 border border-emerald-500/20 px-6 py-4 text-left max-w-2xl mx-auto rounded flex items-start gap-4">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 px-4 md:px-6 py-4 text-left max-w-2xl mx-auto rounded flex items-start gap-3 md:gap-4">
             <ShieldCheck className="w-6 h-6 text-emerald-500 shrink-0 mt-0.5" />
             <div>
               <div className="text-sm font-bold text-emerald-400 tracking-wider mb-1">CLAIM YOUR ASSETS</div>

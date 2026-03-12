@@ -251,3 +251,46 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent-mute);
 }
+
+/* ═══════════════════════════════════════════
+   MOBILE UTILITIES
+   ═══════════════════════════════════════════ */
+
+/* Horizontally scrollable nav tabs */
+.mobile-nav-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.mobile-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile drawer overlay */
+.mobile-drawer-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Mobile drawer slide-in */
+.mobile-drawer {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-drawer.closed {
+  transform: translateX(-100%);
+}
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+/* Hamburger animation */
+.hamburger-line {
+  transition: all 0.3s ease;
+}
+
+/* Prevent body scroll when mobile menu is open */
+.body-locked {
+  overflow: hidden;
+  touch-action: none;
+}

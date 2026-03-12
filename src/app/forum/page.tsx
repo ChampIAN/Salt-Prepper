@@ -104,13 +104,13 @@ export default function ForumPage() {
       <NewsTicker />
 
       <PageContainer>
-        <div className="grid grid-cols-12 gap-6 h-full pb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 h-full pb-10">
           
           {/* Main Dashboard Section */}
-          <div className="col-span-12 lg:col-span-9 flex flex-col gap-6">
+          <div className="lg:col-span-9 flex flex-col gap-4 md:gap-6">
             
             {/* Top Indicator Row */}
-            <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
                <StatCard label="ACTIVE CRISES" value={crisisTotal.toString().padStart(2, '0')} sub="GLOBAL_DETECT" trend="UP" />
                <StatCard label="INTEL SIGNALS" value="28" sub="LAST_24_HOURS" />
                <StatCard label="FIELD REPORTS" value="12" sub="VERIFIED_NODE" />
@@ -118,11 +118,11 @@ export default function ForumPage() {
             </div>
 
             {/* Comms Center: Input & Live Feed */}
-            <div className="grid grid-cols-12 gap-6">
-               <div className="col-span-12 xl:col-span-7">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6">
+               <div className="xl:col-span-7">
                   <TransmissionTerminal categories={dbCategories} />
                </div>
-               <div className="col-span-12 xl:col-span-5">
+               <div className="xl:col-span-5">
                   <GlobalTransmissionFeed />
                </div>
             </div>
@@ -214,7 +214,7 @@ export default function ForumPage() {
           </div>
 
           {/* Sidebar Section */}
-          <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
+          <div className="lg:col-span-3 flex flex-col gap-4 md:gap-6">
             <IntelligenceSidebar />
             
             <div className="flex flex-col gap-4 p-4 bg-warning/5 border border-warning/20 rounded-xl">

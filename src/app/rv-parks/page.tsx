@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import TopHeader from '@/components/layout/TopHeader';
-import { BatteryCharging, Droplet, Waves, MapPin, Zap } from 'lucide-react';
+import { BatteryCharging, Droplet, Waves, MapPin, Zap, Map, List } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { supabase } from '@/lib/supabaseClient';
@@ -17,25 +17,30 @@ export default function RVParksTacticalDirectory() {
     const [rvParks, setRvParks] = useState<any[]>([]);
     const [selectedPark, setSelectedPark] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
+    const [mobileView, setMobileView] = useState<'list' | 'map'>('list');
 
     useEffect(() => {
         async function fetchParks() {
             const { data, error } = await supabase.from('rv_parks').select('*');
             if (data) {
                 // Enrich data with tactical MVP mock fields since they aren't in the base schema
-                const enriched = data.map((park, i) => ({
-                    ...park,
-                    lat: park.latitude || 34.05 + (Math.random() * 2 - 1),
-                    lng: park.longitude || -118.24 + (Math.random() * 2 - 1),
-                    capacity: 25 + (i % 5) * 10,
-                    distance: (2.4 + (i * 1.3)).toFixed(1),
-                    status: i % 4 === 0 ? "UNAVAILABLE" : "AVAILABLE",
-                    features: {
-                        power: i % 3 !== 0,
-                        water: true,
-                        sewage: i % 2 === 0
-                    }
-                }));
+                const enriched = data.map((park, i) => {
+                    const parsedLat = parseFloat(park.latitude);
+                    const parsedLng = parseFloat(park.longitude);
+                    return {
+                        ...park,
+                        lat: isFinite(parsedLat) ? parsedLat : 34.05 + (Math.random() * 2 - 1),
+                        lng: isFinite(parsedLng) ? parsedLng : -118.24 + (Math.random() * 2 - 1),
+                        capacity: 25 + (i % 5) * 10,
+                        distance: (2.4 + (i * 1.3)).toFixed(1),
+                        status: i % 4 === 0 ? "UNAVAILABLE" : "AVAILABLE",
+                        features: {
+                            power: i % 3 !== 0,
+                            water: true,
+                            sewage: i % 2 === 0
+                        }
+                    };
+                });
                 setRvParks(enriched);
                 setSelectedPark(enriched[0]);
             }
@@ -49,7 +54,23 @@ export default function RVParksTacticalDirectory() {
             <TopHeader title="RV PARKS" subtitle="TACTICAL DIRECTORY" />
 
             <div className="flex flex-1 overflow-hidden relative">
-                <aside className="w-full md:w-[450px] border-r border-border bg-bg-secondary/60 backdrop-blur-md h-full overflow-y-auto px-6 py-6 z-10 flex flex-col space-y-6">
+                {/* Mobile view toggle */}
+                <div className="md:hidden absolute top-3 right-3 z-[1100] flex bg-bg-secondary/90 backdrop-blur-md border border-border rounded-lg overflow-hidden">
+                    <button
+                        onClick={() => setMobileView('list')}
+                        className={`px-3 py-2 text-[10px] font-bold tracking-widest flex items-center gap-1.5 transition-colors ${mobileView === 'list' ? 'bg-accent/20 text-accent' : 'text-text-muted'}`}
+                    >
+                        <List size={12} /> LIST
+                    </button>
+                    <button
+                        onClick={() => setMobileView('map')}
+                        className={`px-3 py-2 text-[10px] font-bold tracking-widest flex items-center gap-1.5 transition-colors ${mobileView === 'map' ? 'bg-accent/20 text-accent' : 'text-text-muted'}`}
+                    >
+                        <Map size={12} /> MAP
+                    </button>
+                </div>
+
+                <aside className={`w-full md:w-[450px] border-r border-border bg-bg-secondary/60 backdrop-blur-md h-full overflow-y-auto px-4 md:px-6 py-6 z-10 flex flex-col space-y-4 md:space-y-6 ${mobileView === 'map' ? 'hidden md:flex' : 'flex'}`}>
                     <div className="flex justify-between items-center mb-2">
                         <h2 className="text-[11px] font-black tracking-widest text-text-muted uppercase">IDENTIFIED LOCATIONS</h2>
                         <span className="text-accent text-[10px] font-bold border border-accent/50 px-2 py-0.5 rounded tracking-widest">{loading ? 'SCANNING...' : `${rvParks.length} FOUND`}</span>
@@ -100,7 +121,7 @@ export default function RVParksTacticalDirectory() {
                     ))}
                 </aside>
 
-                <main className="flex-1 bg-bg relative">
+                <main className={`flex-1 bg-bg relative ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
                     {rvParks.length > 0 && selectedPark && (
                         <TacticalMap rvParks={rvParks} selectedPark={selectedPark} setSelectedPark={setSelectedPark} />
                     )}

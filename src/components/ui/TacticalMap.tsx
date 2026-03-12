@@ -2,6 +2,11 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
+const isValidCoord = (val: unknown): val is number =>
+    typeof val === 'number' && isFinite(val);
+
+const DEFAULT_CENTER: [number, number] = [39.8283, -98.5795]; // Center of US
+
 interface Park {
     id: string | number;
     name: string;
@@ -13,8 +18,24 @@ interface Park {
 function MapUpdater({ selectedPark }: { selectedPark: Park | null }) {
     const map = useMap();
     useEffect(() => {
-        if (selectedPark && selectedPark.lat && selectedPark.lng) {
-            map.flyTo([selectedPark.lat, selectedPark.lng], 11, { animate: true, duration: 1.5 });
+        if (selectedPark && isValidCoord(selectedPark.lat) && isValidCoord(selectedPark.lng)) {
+            try {
+                // Leaflet flyTo crashes if the container has 0 dimensions (hidden on mobile)
+                const size = map.getSize();
+                if (size.x > 0 && size.y > 0) {
+                    map.flyTo([selectedPark.lat, selectedPark.lng], 11, { animate: true, duration: 1.5 });
+                } else {
+                    // Container not visible yet — use instant setView instead
+                    map.setView([selectedPark.lat, selectedPark.lng], 11, { animate: false });
+                }
+            } catch {
+                // Fallback: silently set view without animation
+                try {
+                    map.setView([selectedPark.lat, selectedPark.lng], 11, { animate: false });
+                } catch {
+                    // Map not ready — ignore
+                }
+            }
         }
     }, [selectedPark, map]);
     return null;
@@ -42,6 +63,8 @@ function RVMarker({ park, selectedPark, setSelectedPark }: { park: Park, selecte
             markerRef.current.openPopup();
         }
     }, [isSelected, selectedPark]);
+
+    if (!isValidCoord(park.lat) || !isValidCoord(park.lng)) return null;
 
     return (
         <Marker
@@ -74,9 +97,12 @@ export default function TacticalMap({
     selectedPark: Park | null,
     setSelectedPark: (park: Park) => void
 }) {
+    const centerLat = isValidCoord(selectedPark?.lat) ? selectedPark!.lat : DEFAULT_CENTER[0];
+    const centerLng = isValidCoord(selectedPark?.lng) ? selectedPark!.lng : DEFAULT_CENTER[1];
+
     return (
         <MapContainer
-            center={[selectedPark?.lat || 39.8283, selectedPark?.lng || -98.5795]}
+            center={[centerLat, centerLng]}
             zoom={11}
             style={{ height: '100%', width: '100%', background: '#000000' }}
             zoomControl={false}
