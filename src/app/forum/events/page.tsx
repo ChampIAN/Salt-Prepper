@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function EventsRadarPage() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<{ id: string; severity: string; event_type: string; created_at: string; title: string; description: string; location_name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -120,7 +120,13 @@ export default function EventsRadarPage() {
   );
 }
 
-function ProtocolCard({ label, status, uptime }: any) {
+interface ProtocolCardProps {
+  label: string;
+  status: string;
+  uptime: string;
+}
+
+function ProtocolCard({ label, status, uptime }: ProtocolCardProps) {
   return (
     <div className="p-4 bg-surface/30 border border-border/30 rounded-xl">
        <div className="text-[8px] font-mono text-text-dim uppercase tracking-widest mb-2">{label}</div>
