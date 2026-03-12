@@ -246,7 +246,7 @@ export default function App() {
             </h1>
             
             <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-xl font-light">
-              Preparation is an act of stewardship, not fear. Install the <strong className="text-zinc-100 font-medium">Fortress OS</strong>—a comprehensive mechanical system to protect your family and preserve your community when the grid fails.
+              Preparation is an act of stewardship, not fear. Install the <strong className="text-zinc-100 font-medium">Fortress OS</strong>&mdash;a comprehensive mechanical system to protect your family and preserve your community when the grid fails.
             </p>
             
             {/* High-Conversion Preorder Block */}
@@ -309,7 +309,7 @@ export default function App() {
                 <div className="relative z-10 text-center pb-4">
                   <div className="w-12 h-1 bg-amber-500 mx-auto mb-6 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
                   <p className="text-zinc-300 text-xs uppercase tracking-[0.25em] font-medium mb-2">A Faith-Centered Guide to</p>
-                  <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-mono mb-8">Building Your Life's Stronghold</p>
+                  <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-mono mb-8">Building Your Life&apos;s Stronghold</p>
                   <p className="text-white font-bold tracking-[0.4em] text-xs border-t border-zinc-800/80 pt-6">AUTHOR NAME</p>
                 </div>
               </div>
@@ -499,7 +499,7 @@ export default function App() {
                     <div className="flex text-emerald-500 mb-3 gap-0.5">
                       {[...Array(5)].map((_, j) => <Star key={j} className="w-3 h-3 fill-current" />)}
                     </div>
-                    <p className="text-sm text-zinc-300 font-light leading-relaxed mb-6">"{rev.text}"</p>
+                    <p className="text-sm text-zinc-300 font-light leading-relaxed mb-6">&quot;{rev.text}&quot;</p>
                   </div>
                   <div>
                     <div className="font-bold text-xs text-white tracking-widest">{rev.author}</div>
@@ -520,7 +520,7 @@ export default function App() {
         <div className="max-w-3xl mx-auto px-6 relative z-10 text-center reveal-on-scroll">
           <ShieldCheck className="w-12 h-12 text-emerald-500 mx-auto mb-6" />
           <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter">DECRYPT CHAPTER 1</h2>
-          <p className="text-zinc-400 font-light mb-10 max-w-xl mx-auto">Enter your comm-link below to instantly receive the foundational chapter: "The Theology of the Watchman".</p>
+          <p className="text-zinc-400 font-light mb-10 max-w-xl mx-auto">Enter your comm-link below to instantly receive the foundational chapter: &quot;The Theology of the Watchman&quot;.</p>
 
           <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-zinc-800 p-8 rounded-xl relative shadow-2xl">
             {downloadState === 'idle' && (

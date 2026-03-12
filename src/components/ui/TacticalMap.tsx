@@ -2,7 +2,15 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
-function MapUpdater({ selectedPark }: { selectedPark: any }) {
+interface Park {
+    id: string | number;
+    name: string;
+    lat: number;
+    lng: number;
+    status: string;
+}
+
+function MapUpdater({ selectedPark }: { selectedPark: Park | null }) {
     const map = useMap();
     useEffect(() => {
         if (selectedPark && selectedPark.lat && selectedPark.lng) {
@@ -25,9 +33,9 @@ const createPulsingIcon = (isActive: boolean) => L.divIcon({
     popupAnchor: [0, -10]
 });
 
-function RVMarker({ park, selectedPark, setSelectedPark }: any) {
+function RVMarker({ park, selectedPark, setSelectedPark }: { park: Park, selectedPark: Park | null, setSelectedPark: (park: Park) => void }) {
     const isSelected = selectedPark?.id === park.id;
-    const markerRef = React.useRef<any>(null);
+    const markerRef = React.useRef<L.Marker>(null);
 
     useEffect(() => {
         if (isSelected && markerRef.current) {
@@ -62,9 +70,9 @@ export default function TacticalMap({
     selectedPark,
     setSelectedPark
 }: {
-    rvParks: any[],
-    selectedPark: any,
-    setSelectedPark: (park: any) => void
+    rvParks: Park[],
+    selectedPark: Park | null,
+    setSelectedPark: (park: Park) => void
 }) {
     return (
         <MapContainer

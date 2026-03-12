@@ -15,10 +15,10 @@ import { supabase } from '@/lib/supabaseClient';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function ForumPage() {
-  const [trendingThreads, setTrendingThreads] = React.useState<any[]>([]);
-  const [activeSummary, setActiveSummary] = React.useState<any>(null);
-  const [categoryFeeds, setCategoryFeeds] = React.useState<Record<string, any[]>>({});
-  const [dbCategories, setDbCategories] = React.useState<any[]>([]);
+  const [trendingThreads, setTrendingThreads] = React.useState<{ id: string; title: string; count: number; is_event: boolean }[]>([]);
+  const [activeSummary, setActiveSummary] = React.useState<{ summary_text: string; key_developments: string[]; recommendations: string[] } | undefined>(undefined);
+  const [categoryFeeds, setCategoryFeeds] = React.useState<Record<string, { id: string; title: string; created_at: string }[]>>({});
+  const [dbCategories, setDbCategories] = React.useState<{ id: string; name: string; slug: string }[]>([]);
   const [crisisTotal, setCrisisTotal] = React.useState(0);
 
   React.useEffect(() => {
@@ -56,7 +56,7 @@ export default function ForumPage() {
 
         // Fetch Latest Threads for each category to populate the "Live Feed"
         if (catData) {
-            const feeds: Record<string, any[]> = {};
+            const feeds: Record<string, { id: string; title: string; created_at: string }[]> = {};
             for (const cat of catData) {
                 const { data: catThreads } = await supabase
                     .from('forum_threads')
@@ -234,7 +234,7 @@ export default function ForumPage() {
   );
 }
 
-function StatCard({ label, value, sub, color = "text-text-heading", trend }: any) {
+function StatCard({ label, value, sub, color = "text-text-heading", trend }: { label: string; value: string; sub: string; color?: string; trend?: "UP" | "DOWN" }) {
   return (
     <div className="p-4 bg-surface/30 border border-border/30 rounded-xl flex flex-col justify-between hover:bg-surface/50 transition-colors">
       <div>

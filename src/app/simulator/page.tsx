@@ -60,12 +60,14 @@ export default function SimulatorPage() {
         setLogs(["[SYSTEM] INITIALIZING SIMULATION CORE...", "[SYSTEM] LOADING GRID_DOWN SEQUENCE V1.4..."]);
     };
 
-    const handleOptionSelect = (option: any) => {
+    const handleOptionSelect = (option: { text: string; cost: Record<string, number | undefined>; outcome: string }) => {
         // Apply costs
-        let newResources = { ...resources };
+        const newResources = { ...resources };
         Object.keys(option.cost).forEach(key => {
-            // @ts-ignore
-            newResources[key] = Math.max(0, newResources[key] + option.cost[key]);
+            const costValue = option.cost[key];
+            if (typeof costValue === 'number' && key in newResources) {
+                newResources[key as keyof typeof resources] = Math.max(0, newResources[key as keyof typeof resources] + costValue);
+            }
         });
         setResources(newResources);
 
@@ -139,7 +141,7 @@ export default function SimulatorPage() {
                             <ShieldAlert size={48} className="text-accent mb-6 opacity-80" />
                             <h2 className="text-2xl font-black tracking-widest text-text-heading uppercase mb-4">WINTER GRID DOWN</h2>
                             <p className="text-sm text-text-muted mb-8 leading-relaxed">
-                                A cascading failure has knocked out the Northeast grid. Temperatures are plummeting. Municipal services are offline. Test your circle's preparedness in a simulated 7-day severe blackout.
+                                A cascading failure has knocked out the Northeast grid. Temperatures are plummeting. Municipal services are offline. Test your circle&apos;s preparedness in a simulated 7-day severe blackout.
                             </p>
                             <button
                                 onClick={startScenario}
