@@ -66,7 +66,7 @@ export default function App() {
     return () => { clearInterval(timer); clearInterval(inventoryTimer); };
   }, []);
 
-  const handleDownload = (e) => {
+  const handleDownload = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setDownloadState('loading');
